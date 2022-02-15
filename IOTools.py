@@ -6,6 +6,7 @@
 # bastien.rigaud@univ-rennes1.fr
 # Description:
 
+import os
 import numpy as np
 import SimpleITK as sitk
 import vtk
