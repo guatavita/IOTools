@@ -82,7 +82,8 @@ class PolydataReaderWriter(DataReaderWriter):
 
     def set_filepath(self, filepath):
         self.reader.SetFileName(filepath)
-        self.writer.SetFileName(filepath)
+        if self.polydata:
+            self.writer.SetFileName(filepath)
 
     def import_data(self):
         self.reader.Update()
