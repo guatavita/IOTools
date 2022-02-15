@@ -14,6 +14,10 @@ import pyvista as pv
 import pyacvd
 import math
 
+def splitext_(path):
+    if len(path.split('.')) > 2:
+        return path.split('.')[0], '.'.join(path.split('.')[-2:])
+    return os.path.splitext(path)
 
 class DataReaderWriter(object):
     def __init__(self, filepath):
