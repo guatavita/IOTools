@@ -95,7 +95,8 @@ class PolydataReaderWriter(DataReaderWriter):
 
 
 class DataConverter(object):
-    def __init__(self, polydata=None, image=None, nb_points=None, spacing=None, inval=1, outval=0, cast_float32=True):
+    def __init__(self, polydata=None, image=None, nb_points=None, spacing=None, inval=1, outval=0, cast_float32=True,
+                 return_contour=False):
         self.polydata = polydata
         self.spacing = spacing if spacing else (1.0, 1.0, 1.0)
         if image is not None:
@@ -108,6 +109,7 @@ class DataConverter(object):
         self.inval = inval
         self.outval = outval
         self.cast_float32 = cast_float32
+        self.return_contour = return_contour
 
     def mask_to_polydata(self):
         label = numpy_support.numpy_to_vtk(num_array=self.numpy_array.ravel(), deep=True, array_type=vtk.VTK_FLOAT)
@@ -191,6 +193,12 @@ class DataConverter(object):
         sitk_img = sitk.GetImageFromArray(np_array.reshape(dim[2], dim[1], dim[0]))  # reversed dimension here
         sitk_img.SetSpacing(self.spacing)
         sitk_img.SetOrigin(origin)
+
+        if self.return_contour:
+            contour_filter = sitk.BinaryContourImageFilter()
+            contour_filter.SetFullyConnected(False)
+            contour_filter.SetNumberOfThreads(0)
+            sitk_img = contour_filter.Execute(sitk_img)
 
         if self.cast_float32:
             cast_filter = sitk.CastImageFilter()
